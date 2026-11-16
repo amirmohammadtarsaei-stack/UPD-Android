@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101010">
+<title>UPD | Unique Personal Development</title>
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+:root{--bg:#101010;--panel:#1c1c1c;--panel2:#24211d;--bronze:#b68a45;--champ:#d6b66c;--text:#f5f1e8;--muted:#a39b90;--line:#40372a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Tahoma,Arial,sans-serif;padding-bottom:82px}
+header{padding:24px 18px 14px;background:linear-gradient(145deg,#211b13,#101010 65%)}
+.brand{color:var(--champ);font-size:30px;font-weight:900;letter-spacing:3px}.sub{color:var(--muted);font-size:11px;letter-spacing:1px;margin-top:4px}
+main{padding:14px;max-width:760px;margin:auto}.hello{font-size:19px;font-weight:bold;margin:8px 0 4px}.date{color:var(--muted);font-size:12px;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.card{background:var(--panel);border:1px solid #30291f;border-radius:16px;padding:14px;margin-bottom:12px}
+.kicker{font-size:12px;color:var(--muted)}.num{font-size:25px;color:var(--champ);font-weight:bold;margin-top:7px}
+h2{font-size:15px;margin:4px 0 12px;color:var(--champ)}.row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+button{border:1px solid var(--bronze);background:#2a241b;color:var(--text);padding:10px 12px;border-radius:11px;font:inherit;font-size:12px}
+input,select{width:100%;background:#121212;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:11px;font:inherit;margin:5px 0}
+.progress{height:7px;background:#39332b;border-radius:20px;overflow:hidden;margin-top:9px}.bar{height:100%;background:linear-gradient(90deg,#8e642e,var(--champ));width:0%}
+.task{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid #30291f}.task:last-child{border:0}.task input{width:auto;margin:0;accent-color:var(--bronze)}
+nav{position:fixed;bottom:0;left:0;right:0;background:#171513;border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:12px 4px calc(12px + env(safe-area-inset-bottom));z-index:2}
+nav button{border:0;background:transparent;color:var(--muted);padding:7px;font-size:11px}nav button.active{color:var(--champ)}
+section.page{display:none}section.page.active{display:block}.hint{color:var(--muted);font-size:11px;line-height:1.8}
+</style>
+</head>
+<body>
+<header><div class="brand">UPD</div><div class="sub">UNIQUE PERSONAL DEVELOPMENT</div></header>
+<main>
+<section id="home" class="page active">
+<div class="hello">امروز برای پیشرفت آماده‌ای؟</div><div class="date" id="today"></div>
+<div class="grid">
+<div class="card"><div class="kicker">وظایف انجام‌شده</div><div class="num" id="doneCount">۰ / ۰</div></div>
+<div class="card"><div class="kicker">پیشرفت وظایف امروز</div><div class="num" id="taskPercent">۰٪</div><div class="progress"><div class="bar" id="taskBar"></div></div></div>
+</div>
+<div class="card"><div class="row"><h2>کارهای امروز</h2><button onclick="showPage('tasks')">مدیریت وظایف</button></div><div id="homeTasks" class="hint">هنوز کاری ثبت نشده است.</div></div>
+<div class="card"><h2>پروژه‌های شخصی</h2><div id="projectSummary" class="hint"></div></div>
+<div class="card"><h2>دویدن امروز</h2><div class="grid"><div><div class="kicker">مسافت (کیلومتر)</div><div class="num" id="runKm">۰</div></div><div><div class="kicker">مدت (دقیقه)</div><div class="num" id="runMin">۰</div></div></div></div>
+</section>
+<section id="tasks" class="page">
+<h2>برنامه‌ریزی روزانه</h2><div class="card"><input id="taskInput" placeholder="مثلاً ۳۰ دقیقه مطالعه زبان"><div class="row"><select id="priority"><option>معمولی</option><option>مهم</option><option>فوری</option></select><button onclick="addTask()">افزودن کار</button></div></div><div class="card" id="taskList"></div>
+</section>
+<section id="projects" class="page">
+<h2>پروژه‌های پیشرفت</h2>
+<div class="card"><h2>یادگیری زبان</h2><div class="row"><span class="kicker">درصد پیشرفت</span><b id="langVal">۰٪</b></div><input type="range" min="0" max="100" value="0" id="langRange" oninput="setProject('lang',this.value)"><div class="progress"><div class="bar" id="langBar"></div></div></div>
+<div class="card"><h2>برنامه‌نویسی</h2><div class="row"><span class="kicker">درصد پیشرفت</span><b id="codeVal">۰٪</b></div><input type="range" min="0" max="100" value="0" id="codeRange" oninput="setProject('code',this.value)"><div class="progress"><div class="bar" id="codeBar"></div></div></div>
+<p class="hint">درصدها فعلاً دستی قابل تنظیم‌اند؛ در نسخه بعدی می‌توانیم پیشرفت را بر اساس درس‌ها و تمرین‌های تکمیل‌شده محاسبه کنیم.</p>
+</section>
+<section id="running" class="page">
+<h2>ثبت فعالیت دویدن</h2><div class="card"><label>مسافت (کیلومتر)<input id="kmInput" type="number" min="0" step="0.1" placeholder="مثلاً ۲.۵"></label><label>مدت زمان (دقیقه)<input id="minInput" type="number" min="0" step="1" placeholder="مثلاً ۲۰"></label><button onclick="saveRun()">ثبت فعالیت</button></div><div class="card"><h2>مجموع فعالیت‌های ثبت‌شده</h2><div id="runHistory" class="hint">هنوز فعالیتی ثبت نشده است.</div></div>
+</section>
+<section id="settings" class="page"><h2>تنظیمات</h2><div class="card"><b>UPD · Bronze Edition</b><p class="hint">اطلاعات این نسخه آزمایشی در حافظه همین مرورگر ذخیره می‌شود. پیش از پاک‌کردن داده‌های مرورگر، از اطلاعات مهم نسخه پشتیبان بگیر.</p><button onclick="if(confirm('همه اطلاعات برنامه پاک شود؟')){localStorage.removeItem('updData');location.reload()}">پاک‌کردن اطلاعات</button></div></section>
+</main>
+<nav>
+<button class="active" data-page="home" onclick="showPage('home')">خانه</button>
+<button data-page="tasks" onclick="showPage('tasks')">وظایف</button>
+<button data-page="projects" onclick="showPage('projects')">پروژه‌ها</button>
+<button data-page="running" onclick="showPage('running')">دویدن</button>
+<button data-page="settings" onclick="showPage('settings')">تنظیمات</button>
+</nav>
+<script>
+const fa=n=>new Intl.NumberFormat('fa-IR').format(n);
+let data=JSON.parse(localStorage.getItem('updData')||'{"tasks":[],"lang":0,"code":0,"runs":[]}');
+function save(){localStorage.setItem('updData',JSON.stringify(data));render()}
+function showPage(id){document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id===id));document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===id))}
+function addTask(){let v=document.getElementById('taskInput').value.trim();if(!v)return;data.tasks.push({text:v,priority:document.getElementById('priority').value,done:false});document.getElementById('taskInput').value='';save()}
+function toggleTask(i){data.tasks[i].done=!data.tasks[i].done;save()}
+function deleteTask(i){data.tasks.splice(i,1);save()}
+function setProject(k,v){data[k]=Number(v);save()}
+function saveRun(){let km=Number(document.getElementById('kmInput').value),min=Number(document.getElementById('minInput').value);if(km<=0||min<=0){alert('مسافت و مدت زمان را وارد کن.');return}data.runs.unshift({km,min,date:new Date().toLocaleDateString('fa-IR')});document.getElementById('kmInput').value='';document.getElementById('minInput').value='';save()}
+function render(){
+let done=data.tasks.filter(t=>t.done).length,total=data.tasks.length,p=total?Math.round(done/total*100):0;
+document.getElementById('doneCount').textContent=fa(done)+' / '+fa(total);document.getElementById('taskPercent').textContent=fa(p)+'٪';document.getElementById('taskBar').style.width=p+'%';
+let taskHtml=data.tasks.length?data.tasks.map((t,i)=>`<div class="task"><input type="checkbox" ${t.done?'checked':''} onchange="toggleTask(${i})"><span style="flex:1;${t.done?'text-decoration:line-through;color:#888':''}">${esc(t.text)} <small class="hint">(${t.priority})</small></span><button onclick="deleteTask(${i})">حذف</button></div>`).join(''):'هنوز کاری ثبت نشده است.';
+document.getElementById('taskList').innerHTML=taskHtml;document.getElementById('homeTasks').innerHTML=taskHtml;
+document.getElementById('langRange').value=data.lang;document.getElementById('codeRange').value=data.code;
+document.getElementById('langVal').textContent=fa(data.lang)+'٪';document.getElementById('codeVal').textContent=fa(data.code)+'٪';document.getElementById('langBar').style.width=data.lang+'%';document.getElementById('codeBar').style.width=data.code+'%';
+document.getElementById('projectSummary').innerHTML='زبان: '+fa(data.lang)+'٪ · برنامه‌نویسی: '+fa(data.code)+'٪';
+let km=data.runs.reduce((a,r)=>a+r.km,0),min=data.runs.reduce((a,r)=>a+r.min,0);document.getElementById('runKm').textContent=fa(km.toFixed(1));document.getElementById('runMin').textContent=fa(min);
+document.getElementById('runHistory').innerHTML=data.runs.length?data.runs.map(r=>`${r.date} — ${fa(r.km)} کیلومتر، ${fa(r.min)} دقیقه`).join('<br>'):'هنوز فعالیتی ثبت نشده است.';
+}
+function esc(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+document.getElementById('today').textContent=new Date().toLocaleDateString('fa-IR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+render();
+</script>
+</body></html>
