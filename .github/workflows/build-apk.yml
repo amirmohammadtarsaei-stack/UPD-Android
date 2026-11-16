@@ -1,0 +1,39 @@
+
+name: Build UPD APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: android-actions/setup-android@v3
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Extract Android project
+        run: |
+          unzip -q UPD_Android_Project-1.zip -d .
+          test -f UPD_Android_Project/app/build.gradle
+
+      - name: Build debug APK
+        working-directory: UPD_Android_Project
+        run: gradle assembleDebug
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: upd-debug-apk
+          path: UPD_Android_Project/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          
