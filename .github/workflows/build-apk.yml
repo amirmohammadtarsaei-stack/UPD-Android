@@ -1,5 +1,5 @@
 
-name: name: Build UPD APK
+name:  Build UPD APK
 
 on:
   workflow_dispatch:
