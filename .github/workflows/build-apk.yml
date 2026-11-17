@@ -1,5 +1,5 @@
 
-name: Build UPD APK
+name: name: Build UPD APK
 
 on:
   workflow_dispatch:
@@ -16,7 +16,7 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - uses:            - name: Accept Android licenses
+      - name: Accept Android licenses
         run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
       - uses: gradle/actions/setup-gradle@v4
@@ -37,4 +37,3 @@ jobs:
           name: upd-debug-apk
           path: UPD_Android_Project/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
-          
